@@ -48,4 +48,9 @@ public class Game1 : Game
 
         base.Draw(gameTime);
     }
+
+    public void Quit()
+    {
+        this.Exit();
+    }
 }
