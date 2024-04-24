@@ -9,12 +9,23 @@ class Movement
         this.Object = gameObject;
     }
 
+        public Movement(BaseGameObject gameObject, float mass, Vector2 gravity)
+    {
+        this.Object = gameObject;
+        this.mass = mass;
+        this.gravity = gravity;
+    }
+
     public virtual void calculateVelocity(GameTime gameTime)
     {
         float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         if(gravity.Y < 1.0)
         {
             gravity.Y += deltaTime;
+        }
+        else
+        {
+            gravity.Y = 1.0f;
         }
         
         acceleration += (gravity / mass) * deltaTime;
@@ -23,11 +34,10 @@ class Movement
         Object.setPosition(Object.getPosition() + (velocity * deltaTime));
     }
 
-    float speed;
-    public Vector2 direction;
-    public Vector2 acceleration;
-    public Vector2 velocity;
-    public Vector2 gravity;
-    public float mass;
+
+    public Vector2 acceleration = Vector2.Zero;
+    public Vector2 velocity = Vector2.Zero;
+    public Vector2 gravity = Vector2.Zero;
+    public float mass = 0.0f;
     private BaseGameObject Object;
 }

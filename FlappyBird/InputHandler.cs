@@ -1,18 +1,15 @@
 // Brittany Blair //
-// Input handling system
+// Action handling system
 //      Commands = key, gamepad, or mouse strokes
 //      Actions = Jump, movement, or other game specific actions
-//      InputHandler = Checks if actions are made based on input & allows for input re-mapping.
+//      ActionHandler = Checks if actions are made based on Action & allows for Action re-mapping.
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
  
  interface Command
 {
-    bool isInputActivated();
+    bool isActionActivated();
 }
 class KeyCommand : Command
 {
@@ -22,7 +19,7 @@ class KeyCommand : Command
         this.activeState = state;
     }
     
-    public bool isInputActivated()
+    public bool isActionActivated()
     {
         if( activeState == KeyState.Up)
         {
@@ -60,7 +57,7 @@ class GamepadCommand : Command
         this.button = button;
     }
     
-    public bool isInputActivated()
+    public bool isActionActivated()
     {
         return GamePadButtons.Equals(this.button, this.activeState);
     }
@@ -110,7 +107,7 @@ class MouseCommand : Command
         this.activeState = state;
     }
 
-    public bool isInputActivated()
+    public bool isActionActivated()
     {
         switch(this.button)
         {
@@ -160,71 +157,69 @@ public enum MouseButtons
     ClickR,
     ClickW,
 }
-class Action
+class ActionEvent
 {
-    public Action()
+    public ActionEvent(Action action)
     {
-        name = "";
+        this.action = action;
         List<Command> commands= new List<Command>();
     }
-    public Action(string name, List<Command> commands)
+    public ActionEvent(Action action,List<Command> commands)
     {
-        this.name = name;
+        this.action=action;
         this.commands = commands;
     }
 
-    public virtual void Execute()
-    {
-
-    }
-
-    public bool isInputActive()
+    public bool isActionActive()
     {
         foreach (Command command in this.commands)
         {
-            if (command.isInputActivated())
+            if (command.isActionActivated())
             {
-                Execute();
                 return true;
             }
         }
         return false;
     }
-
     public List<Command> getCommands()
     {
         return commands;
     }
-    public string getName()
+    public Action getActionType()
     {
-        return name;
+        return this.action;
     }
     public void setCommands(List<Command> commands)
     {
         this.commands = commands;
     }
 
-
-    public string name;
+    protected Action action;
     protected List<Command> commands;
 }
 
-class InputHandler
+class ActionHandler
 {
 // Constructor
-    public InputHandler(List<Action> actions)
+    public ActionHandler(List<ActionEvent> actions)
     {
         this.actions = actions;
     }
 // Methods
-    public virtual void HandleInput()
+    public virtual Action HandleAction()
     {
-        foreach (Command a in actions)
+        foreach (ActionEvent a in actions)
         {
-            a.isInputActivated();
-        }        
+            if(a.isActionActive())
+            {
+                return a.getActionType();
+            }
+        }
+
+        return Action.NONE;       
     }
-    public virtual bool BindButton(Action action, Buttons button, ButtonState state)
+    
+    public virtual bool BindButton(ActionEvent action, Buttons button, ButtonState state)
     {
         if ( actions.Contains(action))
         {
@@ -274,7 +269,7 @@ class InputHandler
         }
         else return false;
     }
-    public virtual bool BindKey(Action action, Keys key, KeyState state)
+    public virtual bool BindKey(ActionEvent action, Keys key, KeyState state)
     {
         if( actions.Contains(action) )
         {
@@ -323,7 +318,7 @@ class InputHandler
         }
         else return false;
     }
-    public virtual bool BindMouseState(Action action, MouseState mouseState, ButtonState state)
+    public virtual bool BindMouseState(ActionEvent action, MouseState mouseState, ButtonState state)
     {
         if (actions.Contains(action))
         {
@@ -371,11 +366,12 @@ class InputHandler
         else return false;
     }
 // Getters
-    public List<Action> getActions()
+    public List<ActionEvent
+>   getActions()
     {
         return this.actions;
     }
 
 // Variables
-    protected List<Action> actions;
+    protected List<ActionEvent> actions;
 }
