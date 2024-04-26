@@ -1,24 +1,37 @@
 ﻿// Ignore Spelling: Gameplay
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 public class GameplayState : BaseGameState
 {
-    private const string Player = "Sprites/Player";
-    private const string BackgroundTexture = "Backgrounds/Barren";
+    protected string Player = "Sprites/Player";
+    protected string BackgroundTexture = "Backgrounds/Barren";
+
+    protected PlayerSprite _playerSprite;
+ 
     public override void LoadContent()
     {
+        _playerSprite = new PlayerSprite(LoadTexture(Player));
+        
         AddGameObject(new SplashImage(LoadTexture(BackgroundTexture)));
-        AddGameObject(new PlayerSprite(LoadTexture(Player)));
+        AddGameObject(_playerSprite);
+
+        var playerXPos = _viewportWidth / 2 - _playerSprite.Width / 2;
+        var playerYPos = _viewportHeight - _playerSprite.Height - 30;
+        _playerSprite.Position = new Vector2(playerXPos, playerYPos);
     }
 
-    public override void HandleInput()
+    public override void HandleInput(GameTime gameTime)
     {
-        var state = Keyboard.GetState();
-
-        if(state.IsKeyDown(Keys.Escape))
+        _inputManager.GetCommands(cmd =>
         {
-            NotifyEvent(Event.kGAME_QUIT);
-        }
+            if (cmd is GameplayInputCommand.GameExit)
+            {
+                NotifyEvent(Event.kGAME_QUIT);
+            }           
+        });
     }
 
     public event EventHandler<Action> onActionNotification;
@@ -33,5 +46,33 @@ public class GameplayState : BaseGameState
                 obj.OnNotifyAction(actionType);
             }
         }
+    }
+
+    protected void KeepPlayerInBounds()
+    {
+        if (_playerSprite.Position.X < 0)
+        {
+            _playerSprite.Position = new Vector2(0, _playerSprite.Position.Y);
+        }
+
+        if (_playerSprite.Position.X > _viewportWidth - _playerSprite.Width)
+        {
+            _playerSprite.Position = new Vector2(_viewportWidth - _playerSprite.Width, _playerSprite.Position.Y);
+        }
+
+        if (_playerSprite.Position.Y < 0)
+        {
+            _playerSprite.Position = new Vector2(_playerSprite.Position.X, 0);
+        }
+
+        if (_playerSprite.Position.Y > _viewportHeight - _playerSprite.Height)
+        {
+            _playerSprite.Position = new Vector2(_playerSprite.Position.X, _viewportHeight - _playerSprite.Height);
+        }
+    }
+
+    protected override void SetInputManager()
+    {
+        _inputManager = new InputManager(new GameplayInputMapper());
     }
 }

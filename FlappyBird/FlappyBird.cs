@@ -3,6 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace FlappyBird;
+
+enum Scenes
+{
+    START,
+    GAME,
+    LOSE    
+}
 public class FlappyBird : Game
 {
     private BaseGameState _currentGameState;
@@ -13,8 +20,8 @@ public class FlappyBird : Game
     private Rectangle _renderScaleRectangle;
 
 //  Window Size
-    private const int DESIGNED_RESOLUTION_WIDTH = 1280;
-    private const int DESIGNED_RESOLUTION_HEIGHT = 720;
+    private const int DESIGNED_RESOLUTION_WIDTH = 888;
+    private const int DESIGNED_RESOLUTION_HEIGHT = 1016;
     private const float DESIGNED_RESOLUTION_ASPECT_RATIO = DESIGNED_RESOLUTION_WIDTH/ (float)DESIGNED_RESOLUTION_HEIGHT;
    
     public FlappyBird()
@@ -69,7 +76,7 @@ public class FlappyBird : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         
-        SwitchGameState(new SplashState());
+        SwitchGameState(new FlappyBirdGameplayState());
     }
 
     private void CurrentGameState_OnStateSwitched(object sender, BaseGameState e)
@@ -89,7 +96,7 @@ public class FlappyBird : Game
         
         _currentGameState = gameState;
 
-        _currentGameState.Initialize(Content);
+        _currentGameState.Initialize(Content, DESIGNED_RESOLUTION_WIDTH, DESIGNED_RESOLUTION_HEIGHT);
 
         _currentGameState.LoadContent();
 
@@ -122,7 +129,8 @@ public class FlappyBird : Game
 
     protected override void Update(GameTime gameTime)
     {
-       _currentGameState.HandleInput();
+        _currentGameState.HandleInput(gameTime);
+        _currentGameState.Update(gameTime);
 
         base.Update(gameTime);
     }

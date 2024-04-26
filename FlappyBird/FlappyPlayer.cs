@@ -3,24 +3,29 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 class FlappyPlayer : PlayerSprite
 {
+    bool isJumping = false;
     public FlappyPlayer(Texture2D texture): base(texture)
     {
-        this.move = new Movement(this, .5f, new Vector2(0, 1));
+        this.move = new Movement(this, 35f, new Vector2(0, 20f));
     }
 
     public void Update(GameTime gameTime)
     {
         move.calculateVelocity(gameTime);
+        if (move.gravity.Y >= move.startGravity.Y / 10)
+        {
+            isJumping = false;
+        }
     }
 
-    public override void OnNotifyAction(Action actionType)
+    public void Jump()
     {
-        switch (actionType)
+        if (!isJumping)
         {
-            case Action.JUMP:
-                move.gravity.Y = -1;
-                break;
-        }
+            isJumping = true;
+            move.gravity.Y = -30;
+
+        } 
     }
     Movement move;
 }

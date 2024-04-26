@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -12,7 +12,12 @@ public abstract class BaseGameState
 
     private const string FallbackTexture = "SplashScreens/Empty";
 
-    private ContentManager _contentManager;
+    protected ContentManager _contentManager;
+    protected int _viewportHeight;
+    protected int _viewportWidth;
+
+
+    protected InputManager _inputManager {  get; set; }
 
     // Loading and unloading content
     public abstract void LoadContent();
@@ -21,9 +26,13 @@ public abstract class BaseGameState
         _contentManager.Unload();
     }
 
-    public void Initialize(ContentManager contentManager)
+    public virtual void Initialize(ContentManager contentManager, int viewportWidth, int viewportHeight)
     {
         _contentManager = contentManager;
+        _viewportHeight = viewportHeight;
+        _viewportWidth = viewportWidth;
+
+        SetInputManager();
     }
 
     protected Texture2D LoadTexture(string textureName)
@@ -33,8 +42,10 @@ public abstract class BaseGameState
     }
 
     // Input
-    public abstract void HandleInput();
-
+    protected abstract void SetInputManager();
+    public abstract void HandleInput(GameTime gameTime);
+    public virtual void Update(GameTime gameTime) { }
+            
     // Events
     public event EventHandler<Event> OnEventNotification;
     protected void NotifyEvent(Event eventType, object argument = null)
@@ -57,6 +68,11 @@ public abstract class BaseGameState
     protected void AddGameObject(BaseGameObject gameObject)
     {
         _gameObjects.Add(gameObject);
+    }
+
+    protected void RemoveGameObject(BaseGameObject gameObject)
+    {
+        _gameObjects.Remove(gameObject);
     }
 
     public void Render(SpriteBatch spriteBatch)

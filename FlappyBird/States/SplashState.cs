@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 public class SplashState : BaseGameState
@@ -8,14 +9,24 @@ public class SplashState : BaseGameState
         AddGameObject(new SplashImage(LoadTexture("SplashScreens/Splash")));
     }
 
-    public override void HandleInput()
+    public override void HandleInput(GameTime gameTime)
     {
-        var state = Keyboard.GetState();
-
-        if(state.IsKeyDown(Keys.Enter))
+        _inputManager.GetCommands(cmd =>
         {
-            SwitchState(new GameplayState());
-        }
+            if (cmd is SplashInputCommand.GameSelect)
+            {
+                SwitchState(new GameplayState());
+            }
+
+            if (cmd is SplashInputCommand.GameExit)
+            {
+                NotifyEvent(Event.kGAME_QUIT);
+            }
+        });
+    }
+    protected override void SetInputManager()
+    {
+        _inputManager = new InputManager(new SplashInputMapper());
     }
 }
 
