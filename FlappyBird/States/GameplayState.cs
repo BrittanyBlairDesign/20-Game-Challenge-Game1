@@ -34,19 +34,6 @@ public class GameplayState : BaseGameState
         });
     }
 
-    public event EventHandler<Action> onActionNotification;
-    protected void NotifyAction (Action actionType, object argument = null)
-    {
-        onActionNotification?.Invoke(this, actionType);
-        foreach ( var gameObj in _gameObjects)
-        {
-            if (gameObj.GetType() == typeof(PlayerSprite))
-            {
-                PlayerSprite obj = gameObj as PlayerSprite;
-                obj.OnNotifyAction(actionType);
-            }
-        }
-    }
 
     protected void KeepPlayerInBounds()
     {

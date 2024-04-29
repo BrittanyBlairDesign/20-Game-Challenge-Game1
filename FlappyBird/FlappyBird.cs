@@ -1,6 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FlappyBird;
 
@@ -15,6 +19,11 @@ public class FlappyBird : Game
     private BaseGameState _currentGameState;
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+
+    private const string PATH = "save.json";
+    private SaveFile save;
+    private bool isDebug = true;
+    private bool isPaused = false;
 //  Render Target
     private RenderTarget2D _renderTarget;
     private Rectangle _renderScaleRectangle;
@@ -75,7 +84,7 @@ public class FlappyBird : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        
+        save = Load();
         SwitchGameState(new FlappyBirdGameplayState());
     }
 
@@ -98,30 +107,43 @@ public class FlappyBird : Game
 
         _currentGameState.Initialize(Content, DESIGNED_RESOLUTION_WIDTH, DESIGNED_RESOLUTION_HEIGHT);
 
-        _currentGameState.LoadContent();
-
+        if (isDebug)
+        {
+            _currentGameState.LoadContent(_graphics.GraphicsDevice);
+        }
+        else
+        {
+            _currentGameState.LoadContent();
+        }
         _currentGameState.OnStateSwitched += CurrentGameState_OnStateSwitched;
         _currentGameState.OnEventNotification += _currentGameState_OnEventNotification;
     }
 
     private void _currentGameState_OnEventNotification(object sender, Event e)
     {
+        FlappyBirdGameplayState gs = _currentGameState as FlappyBirdGameplayState;
+
         switch (e)
         {
+            case Event.kSTART:
+                SwitchGameState(new FlappyBirdGameplayState());
+                break;
             case Event.kGAME_QUIT:
+                save.SetScores(gs.score);
+                Save(save);
                 Exit();
+                break;
+            case Event.kPAUSE:
+                isPaused = !isPaused;
+                break;
+            case Event.kLOOSE:
+                save.SetScores(gs.score);
+                Save(save);
+                SwitchGameState(new FlappyBirdStartSplash(save.HighScore.ToString()));
                 break;
         }
     }
 
-    private void _currentGameState_onActionNotification(object sender, Action a)
-    {
-        switch(a)
-        {
-            case Action.JUMP:
-            break;
-        }
-    }
     protected override void UnloadContent()
     {
         _currentGameState?.UnloadContent();
@@ -130,7 +152,11 @@ public class FlappyBird : Game
     protected override void Update(GameTime gameTime)
     {
         _currentGameState.HandleInput(gameTime);
-        _currentGameState.Update(gameTime);
+
+        if(!isPaused)
+        {
+            _currentGameState.Update(gameTime);
+        }
 
         base.Update(gameTime);
     }
@@ -165,5 +191,18 @@ public class FlappyBird : Game
     public void Quit()
     {
         this.Exit();
+    }
+
+    public void Save(SaveFile save)
+    {
+        string serializedText = JsonSerializer.Serialize<SaveFile>(save);
+        Trace.WriteLine(serializedText);
+        File.WriteAllText(PATH, serializedText);
+    }
+
+    public SaveFile Load()
+    {
+        var FileContents = File.ReadAllText(PATH);
+        return JsonSerializer.Deserialize<SaveFile>(FileContents);
     }
 }

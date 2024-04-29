@@ -16,11 +16,14 @@ public abstract class BaseGameState
     protected int _viewportHeight;
     protected int _viewportWidth;
 
-
-    protected InputManager _inputManager {  get; set; }
+    protected GraphicsDevice graphics;
+    protected bool isDebug;
+    protected InputManager _inputManager { get; set; }
 
     // Loading and unloading content
     public abstract void LoadContent();
+    public virtual void LoadContent(GraphicsDevice graphics)
+    { isDebug = true; this.graphics = graphics; }
     public void UnloadContent()
     {
         _contentManager.Unload();
@@ -75,7 +78,7 @@ public abstract class BaseGameState
         _gameObjects.Remove(gameObject);
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public virtual void Render(SpriteBatch spriteBatch)
     {
         foreach (var gameObject in _gameObjects.OrderBy(a => a.zIndex))
         {

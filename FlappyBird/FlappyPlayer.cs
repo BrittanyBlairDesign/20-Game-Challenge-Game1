@@ -1,12 +1,30 @@
 
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Net.Mime;
 class FlappyPlayer : PlayerSprite
 {
-    bool isJumping = false;
+    public bool isJumping = false;
+    public int Score = 0;
+    
+    
     public FlappyPlayer(Texture2D texture): base(texture)
     {
         this.move = new Movement(this, 35f, new Vector2(0, 20f));
+        collisions.Add(new Rectangle((int)Position.X, (int)Position.Y, texture.Height, texture.Width));
+    }
+
+    public FlappyPlayer( GraphicsDevice graphics,Texture2D texture) : base(graphics,texture)
+    {
+        this.move = new Movement(this, 35f, new Vector2(0, 20f));
+        GenerateCollisions();
+        SetCollisionTexture(graphics);
+    }
+
+    public override void GenerateCollisions()
+    {
+        collisions.Add(new Rectangle((int)Position.X, (int)Position.Y, Width, Height));
     }
 
     public void Update(GameTime gameTime)
@@ -16,6 +34,25 @@ class FlappyPlayer : PlayerSprite
         {
             isJumping = false;
         }
+
+        if (collisions != null)
+        {
+            for (int i = 0; i < collisions.Count; i++)
+            {
+                Rectangle rect = collisions[i];
+                rect.X = (int)Position.X;
+                rect.Y = (int)Position.Y;
+
+                collisions[i] = rect;
+            }
+        }
+    }
+
+    public override void Render(SpriteBatch spriteBatch)
+    {
+
+        base.Render(spriteBatch);
+        
     }
 
     public void Jump()
@@ -27,5 +64,6 @@ class FlappyPlayer : PlayerSprite
 
         } 
     }
+
     Movement move;
 }

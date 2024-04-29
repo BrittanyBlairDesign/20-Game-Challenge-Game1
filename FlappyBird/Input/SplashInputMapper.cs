@@ -19,4 +19,16 @@ public class SplashInputMapper : BaseInputMapper
 
         return commands;
     }
+
+    public override IEnumerable<BaseInputCommand> GetMouseState(MouseState state)
+    {
+        var Commands = new List<SplashInputCommand>();
+
+        if(state.RightButton == ButtonState.Pressed)
+        {
+            Commands.Add(new SplashInputCommand.GameSelect());
+        }
+
+        return Commands;
+    }
 }
