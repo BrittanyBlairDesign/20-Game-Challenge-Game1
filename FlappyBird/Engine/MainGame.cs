@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
-namespace FlappyBird;
+
 
 enum Scenes
 {
@@ -14,30 +14,34 @@ enum Scenes
     GAME,
     LOSE    
 }
-public class FlappyBird : Game
+public class MainGame : Game
 {
-    private BaseGameState _currentGameState;
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+    protected BaseGameState _currentGameState;
+    protected BaseGameState _firstGameState;
+    protected GraphicsDeviceManager _graphics;
+    protected SpriteBatch _spriteBatch;
 
-    private const string PATH = "save.json";
-    private SaveFile save;
-    private bool isDebug = true;
-    private bool isPaused = false;
+
+    protected bool isDebug = true;
+    protected bool isPaused = false;
 //  Render Target
     private RenderTarget2D _renderTarget;
     private Rectangle _renderScaleRectangle;
 
 //  Window Size
-    private const int DESIGNED_RESOLUTION_WIDTH = 888;
-    private const int DESIGNED_RESOLUTION_HEIGHT = 1016;
-    private const float DESIGNED_RESOLUTION_ASPECT_RATIO = DESIGNED_RESOLUTION_WIDTH/ (float)DESIGNED_RESOLUTION_HEIGHT;
-   
-    public FlappyBird()
+    private int DESIGNED_RESOLUTION_WIDTH = 888;
+    private int DESIGNED_RESOLUTION_HEIGHT = 1016;
+    private float DESIGNED_RESOLUTION_ASPECT_RATIO;
+
+    public MainGame(int width, int height, BaseGameState firstGameState)
     {
-        _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
-        IsMouseVisible = true;
+        _graphics = new GraphicsDeviceManager(this);
+
+        _firstGameState = firstGameState;
+        DESIGNED_RESOLUTION_WIDTH = width;
+        DESIGNED_RESOLUTION_HEIGHT = height;
+        DESIGNED_RESOLUTION_ASPECT_RATIO = width / (float)height;
     }
 
     protected override void Initialize()
@@ -84,8 +88,8 @@ public class FlappyBird : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        save = Load();
-        SwitchGameState(new FlappyBirdGameplayState());
+
+        SwitchGameState(_firstGameState);
     }
 
     private void CurrentGameState_OnStateSwitched(object sender, BaseGameState e)
@@ -93,7 +97,7 @@ public class FlappyBird : Game
         SwitchGameState(e);
     }
 
-    private void SwitchGameState(BaseGameState gameState)
+    protected void SwitchGameState(BaseGameState gameState)
     {
         if (_currentGameState != null)
         {
@@ -119,27 +123,22 @@ public class FlappyBird : Game
         _currentGameState.OnEventNotification += _currentGameState_OnEventNotification;
     }
 
-    private void _currentGameState_OnEventNotification(object sender, Event e)
+    protected virtual void _currentGameState_OnEventNotification(object sender, Event e)
     {
-        FlappyBirdGameplayState gs = _currentGameState as FlappyBirdGameplayState;
 
         switch (e)
         {
             case Event.kSTART:
-                SwitchGameState(new FlappyBirdGameplayState());
+                SwitchGameState(new GameplayState());
                 break;
             case Event.kGAME_QUIT:
-                save.SetScores(gs.score);
-                Save(save);
                 Exit();
                 break;
             case Event.kPAUSE:
                 isPaused = !isPaused;
                 break;
             case Event.kLOOSE:
-                save.SetScores(gs.score);
-                Save(save);
-                SwitchGameState(new FlappyBirdStartSplash(save.HighScore.ToString()));
+                SwitchGameState(new SplashState());
                 break;
         }
     }
@@ -193,16 +192,7 @@ public class FlappyBird : Game
         this.Exit();
     }
 
-    public void Save(SaveFile save)
-    {
-        string serializedText = JsonSerializer.Serialize<SaveFile>(save);
-        Trace.WriteLine(serializedText);
-        File.WriteAllText(PATH, serializedText);
-    }
+    protected virtual void Save(SaveFile save) { }
 
-    public SaveFile Load()
-    {
-        var FileContents = File.ReadAllText(PATH);
-        return JsonSerializer.Deserialize<SaveFile>(FileContents);
-    }
+    protected virtual SaveFile Load() { return null; }
 }

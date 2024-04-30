@@ -1,8 +1,9 @@
 
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Net.Mime;
+
+namespace FlappyBird;
+
 class FlappyPlayer : PlayerSprite
 {
     public bool isJumping = false;
@@ -12,12 +13,13 @@ class FlappyPlayer : PlayerSprite
     public FlappyPlayer(Texture2D texture): base(texture)
     {
         this.move = new Movement(this, 35f, new Vector2(0, 20f));
-        collisions.Add(new Rectangle((int)Position.X, (int)Position.Y, texture.Height, texture.Width));
+        GenerateCollisions();
     }
 
     public FlappyPlayer( GraphicsDevice graphics,Texture2D texture) : base(graphics,texture)
     {
         this.move = new Movement(this, 35f, new Vector2(0, 20f));
+        collisionOutline = Color.Green;
         GenerateCollisions();
         SetCollisionTexture(graphics);
     }

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -24,6 +25,8 @@ public class BaseGameObject
         // TODO: Drawing call here
         spriteBatch.Draw(_texture, _position, Color.White);
     }
+
+    public virtual void SetCollisionTexture(GraphicsDevice graphics){}
 
     public Vector2 getPosition()
     {

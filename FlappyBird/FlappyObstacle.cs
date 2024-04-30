@@ -1,20 +1,15 @@
 ﻿
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Reflection.Metadata.Ecma335;
-using System.Transactions;
 
+namespace FlappyBird;
 
 
 public class FlappyObstacle : PlayerSprite
 {
     public List<Vector2> TopCollisions = new List<Vector2>();
-    protected int offset;   
+    protected bool hasEnteredSafeZone; 
     public FlappyObstacle(Texture2D texture, Vector2 StartPosition, float speed, Vector2 direction) : base(texture)
     {
         Position = StartPosition;
@@ -114,14 +109,22 @@ public class FlappyObstacle : PlayerSprite
                 foreach (Rectangle pr in other.collisions)
                 {
 
-                    if (r.Intersects(pr))
+                    if (r != collisions[0]) 
                     {
-                        if (r != collisions[0])
+                        if (r.Intersects(pr))
                         {
                             return Event.kLOOSE;
                         }
-                        else
+                    }
+                    else
+                    {
+                        if(r.Intersects(pr) && !hasEnteredSafeZone)
                         {
+                            hasEnteredSafeZone = true;
+                        }
+                        else if(!r.Intersects(pr) && hasEnteredSafeZone)
+                        {
+                            hasEnteredSafeZone = false;
                             return Event.kPOINTS;
                         }
                     }

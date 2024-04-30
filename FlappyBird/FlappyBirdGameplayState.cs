@@ -1,16 +1,13 @@
 
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading.Tasks.Sources;
-
-
 namespace FlappyBird;
+
+
+
 class FlappyBirdGameplayState : GameplayState
 {
     protected string ForegroundTexture;
@@ -27,7 +24,10 @@ class FlappyBirdGameplayState : GameplayState
     private TextObject scoreText;
     private String scoreTexture = "FlappyBird/UI/ScoreFrame";
     private string scoreFont = "FlappyBird/Font/ScoreFont";
-    private GraphicsDevice graphics;
+
+    public TextObject instructions;
+    private string instructionText = " Use 'W' , the Up arrow, or Left Mouse click to jump.";
+    private bool knowsMovement = false;
 
     protected List<FlappyObstacle> _Obstacles = new List<FlappyObstacle>();
     public override void Initialize(ContentManager contentManager, int viewportHeight, int viewportWidth)
@@ -40,42 +40,38 @@ class FlappyBirdGameplayState : GameplayState
     }
     public override void LoadContent()
     {
-        _playerSprite = new FlappyPlayer(LoadTexture(Player));
+        if(isDebug && graphics != null)
+        {
+            _playerSprite = new FlappyPlayer(graphics,LoadTexture(Player));
+        }
+        else
+        {
+            _playerSprite = new FlappyPlayer(LoadTexture(Player));
+        }
+ 
         AddGameObject(new FlappyTerrain(LoadTexture(BackgroundTexture),-1.0f, true));
         AddGameObject(_playerSprite);
         AddGameObject(new FlappyTerrain(LoadTexture(ForegroundTexture), -2.0f, true));
 
         scoreText = new TextObject(LoadTexture(scoreTexture), "Score : ",_contentManager.Load<SpriteFont>(scoreFont));
+        instructions = new TextObject(LoadTexture("FlappyBird/empty"), instructionText, _contentManager.Load<SpriteFont>(scoreFont), new Vector2(10, _viewportHeight - 100));
         var playerXPos = _viewportWidth / 2 - _playerSprite.Width / 2;
         var playerYPos = _viewportHeight /2 - _playerSprite.Height - 30;
 
         obstacleDirection = new Vector2(-1, 0);
 
         _playerSprite.Position = new Vector2(playerXPos, playerYPos);
-        isDebug = false;
-
-       
+ 
     }
 
     public override void LoadContent(GraphicsDevice graphics)
     {
-        _playerSprite = new FlappyPlayer(graphics, LoadTexture(Player));
-        AddGameObject(new FlappyTerrain(LoadTexture(BackgroundTexture), -1.0f, true));
-        AddGameObject(_playerSprite);
-        AddGameObject(new FlappyTerrain(LoadTexture(ForegroundTexture), -2.0f, true));
-        
-        scoreText = new TextObject(LoadTexture(scoreTexture), "Score : ", _contentManager.Load<SpriteFont>(scoreFont));
-
-        var playerXPos = _viewportWidth / 2 - _playerSprite.Width / 2;
-        var playerYPos = _viewportHeight / 2 - _playerSprite.Height - 30;
-
-        obstacleDirection = new Vector2(-1, 0);
-
-        _playerSprite.Position = new Vector2(playerXPos, playerYPos);
-
         this.graphics = graphics;
         isDebug = true;
+
+        this.LoadContent();
     }
+
     public override void HandleInput(GameTime gameTime)
     {
         _inputManager.GetCommands(cmd =>
@@ -88,13 +84,15 @@ class FlappyBirdGameplayState : GameplayState
             if (cmd is GameplayInputCommand.PlayerJump)
             {
                 FlappyPlayer aPlayer = _playerSprite as FlappyPlayer;
-                aPlayer.Jump();  
+                aPlayer.Jump();
+                knowsMovement = true;
             }
             else
             {
                 FlappyPlayer aPlayer = _playerSprite as FlappyPlayer;
                 aPlayer.isJumping = false;
             }
+
         });
     }
 
@@ -173,6 +171,12 @@ class FlappyBirdGameplayState : GameplayState
     {
         base.Render(spriteBatch);
         scoreText.Render(spriteBatch);
+
+        if(!knowsMovement)
+        {
+            instructions.Render(spriteBatch);
+        }
+     
     }
 
     public virtual void InsertGameObject(BaseGameObject gameObject)

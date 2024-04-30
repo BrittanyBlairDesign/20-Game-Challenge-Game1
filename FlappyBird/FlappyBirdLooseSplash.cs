@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace FlappyBird;
 
-class FlappyBirdStartSplash : SplashState
+class FlappyBirdLooseSplash : SplashState
 {
     protected TextObject Title;
     protected string titleTexture;
@@ -18,18 +18,25 @@ class FlappyBirdStartSplash : SplashState
     protected string endTexture;
     protected ButtonObject end;
 
-    public string scoreText;
+    protected string highScoreText;
+    protected string roundScoreText;
     protected string scoreFont;
     protected string scoreTexture;
     protected TextObject highScore;
+    protected TextObject roundScore;
+
+    public FlappyBirdLooseSplash(string highScore, string roundScore)
+    {
+        highScoreText = "High Score : " + highScore;
+        roundScoreText = "End Score : " + roundScore;
+    }
 
     public override void Initialize(ContentManager contentManager, int viewportWidth, int viewportHeight)
     {
-        titleTexture = "FlappyBird/UI/Title";
-        startTexture = "FlappyBird/UI/StartButton";
+        titleTexture = "FlappyBird/UI/EndTitle";
+        startTexture = "FlappyBird/UI/RetryButton";
         endTexture = "FlappyBird/UI/ExitButton";
         scoreTexture = "FlappyBird/UI/scoreFrame";
-        
 
         titleFont = "FlappyBird/Font/ScoreFont";
         scoreFont = "FlappyBird/Font/ScoreFont";
@@ -40,15 +47,19 @@ class FlappyBirdStartSplash : SplashState
     {
         Vector2 startpos = new Vector2(_viewportWidth / 2, _viewportHeight / 2 + 125);
         Vector2 endpos = new Vector2(_viewportWidth / 2, _viewportHeight / 2 + 200);
-        
+
+        Vector2 highScorepos = new Vector2((_viewportWidth / 8) , _viewportHeight / 2 + 50);
+        Vector2 roundScorepos = new Vector2((_viewportWidth / 2), _viewportHeight / 2 + 50);
         Title = new TextObject(LoadTexture(titleTexture), " ", _contentManager.Load<SpriteFont>(titleFont));
-        highScore = new TextObject(LoadTexture(scoreTexture), scoreText, _contentManager.Load<SpriteFont>(scoreFont));
+        highScore = new TextObject(LoadTexture(scoreTexture), highScoreText, _contentManager.Load<SpriteFont>(scoreFont), highScorepos);
+        roundScore = new TextObject(LoadTexture(scoreTexture), roundScoreText, _contentManager.Load<SpriteFont>(scoreFont), roundScorepos);
         start = new ButtonObject(LoadTexture(startTexture), startpos);
         end = new ButtonObject(LoadTexture(endTexture), endpos);
 
-        AddGameObject(new FlappyTerrain(LoadTexture("FlappyBird/Backgrounds/Background"), -1.0f, true));
+        AddGameObject(new FlappyTerrain(LoadTexture("FlappyBird/Backgrounds/Background"), 0.0f, true));
         AddGameObject(Title);
         AddGameObject(highScore);
+        AddGameObject(roundScore);
         AddGameObject(start);
         AddGameObject(end);
     }

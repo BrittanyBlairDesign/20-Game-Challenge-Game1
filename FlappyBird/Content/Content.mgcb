@@ -37,6 +37,18 @@
 /processorParam:TextureFormat=Color
 /build:FlappyBird/Backgrounds/ForeGround.png
 
+#begin FlappyBird/empty.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:FlappyBird/empty.png
+
 #begin FlappyBird/Font/ScoreFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -104,6 +116,42 @@
 /processorParam:TextureFormat=Color
 /build:FlappyBird/Sprites/Tree.png
 
+#begin FlappyBird/UI/EndTitle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:FlappyBird/UI/EndTitle.png
+
+#begin FlappyBird/UI/ExitButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:FlappyBird/UI/ExitButton.png
+
+#begin FlappyBird/UI/RetryButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:FlappyBird/UI/RetryButton.png
+
 #begin FlappyBird/UI/ScoreFrame.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -115,6 +163,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:FlappyBird/UI/ScoreFrame.png
+
+#begin FlappyBird/UI/StartButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:FlappyBird/UI/StartButton.png
+
+#begin FlappyBird/UI/Title.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:FlappyBird/UI/Title.png
 
 #begin SplashScreens/Empty.png
 /importer:TextureImporter

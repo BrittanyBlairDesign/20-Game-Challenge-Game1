@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 public class SplashInputMapper : BaseInputMapper
 {
@@ -24,9 +25,10 @@ public class SplashInputMapper : BaseInputMapper
     {
         var Commands = new List<SplashInputCommand>();
 
-        if(state.RightButton == ButtonState.Pressed)
+        if(state.LeftButton == ButtonState.Pressed)
         {
             Commands.Add(new SplashInputCommand.GameSelect());
+            Trace.WriteLine("\t LEFT MOUSE BUTTON PRESSED.");
         }
 
         return Commands;

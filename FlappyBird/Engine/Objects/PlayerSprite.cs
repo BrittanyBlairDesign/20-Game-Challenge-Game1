@@ -11,6 +11,8 @@ public class PlayerSprite : BaseGameObject
 {
     public List<Rectangle> collisions = new List<Rectangle>();
     protected List<Texture2D> collisionTexture = new List<Texture2D>();
+    protected Color collisionOutline = Color.Red;
+    protected Color collisionFill = Color.Transparent;
     private bool isDebug;
     public PlayerSprite(Texture2D texture)
     {
@@ -35,7 +37,7 @@ public class PlayerSprite : BaseGameObject
     
     public virtual void GenerateCollisions() { }
 
-    public virtual void SetCollisionTexture(GraphicsDevice graphics)
+    public override void SetCollisionTexture(GraphicsDevice graphics)
     {
         collisionTexture.Clear();
 
@@ -44,31 +46,6 @@ public class PlayerSprite : BaseGameObject
             Texture2D Texture = new Texture2D(graphics, r.Width, r.Height);
             var colors = new List<Color>();
 
-            /*
-            for (int y = 0; y < Height; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    if (x > minW && x < maxW ||
-                        y > minH && y < maxH)
-                    {
-                        if (x == minW || x == maxW ||
-                           y == minH || y == maxH)
-                        {
-                            colors.Add(Color.White);
-                        }
-                        else
-                        {
-                            colors.Add(Color.Red);
-                        }
-                    }
-                    else
-                    {
-                        colors.Add(Color.Transparent);
-                    }
-                }
-            }*/
-
             for( int i = 0; i < r.Height; i++ )
             {
                 for (int j = 0; j < r.Width; j++ )
@@ -76,11 +53,12 @@ public class PlayerSprite : BaseGameObject
                     if( i == 0 || i == r.Width - 1
                      || j == 0 || j == r.Height - 1 )
                     {
-                        colors.Add(Color.Red);
+                        colors.Add(collisionOutline);
                     }
                     else
                     {
-                        colors.Add(Color.DarkRed);
+                    
+                        colors.Add(collisionFill);
                     }
                 }
             }

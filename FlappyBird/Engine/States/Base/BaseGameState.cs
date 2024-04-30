@@ -17,7 +17,7 @@ public abstract class BaseGameState
     protected int _viewportWidth;
 
     protected GraphicsDevice graphics;
-    protected bool isDebug;
+    protected bool isDebug = false;
     protected InputManager _inputManager { get; set; }
 
     // Loading and unloading content
