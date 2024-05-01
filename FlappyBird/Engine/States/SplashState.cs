@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 public class SplashState : BaseGameState
 {
@@ -20,13 +21,18 @@ public class SplashState : BaseGameState
 
             if (cmd is SplashInputCommand.GameExit)
             {
-                NotifyEvent(Event.kGAME_QUIT);
+                NotifyEvent(new BaseGameStateEvent.GameQuit());
             }
         });
     }
     protected override void SetInputManager()
     {
         _inputManager = new InputManager(new SplashInputMapper());
+    }
+
+    public override void UpdateGameState(GameTime gameTime)
+    {
+       
     }
 }
 

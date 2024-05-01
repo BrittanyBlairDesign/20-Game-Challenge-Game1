@@ -22,7 +22,7 @@ public class MainGame : Game
     protected SpriteBatch _spriteBatch;
 
 
-    protected bool isDebug = true;
+    protected bool isDebug = false;
     protected bool isPaused = false;
 //  Render Target
     private RenderTarget2D _renderTarget;
@@ -121,24 +121,26 @@ public class MainGame : Game
         }
         _currentGameState.OnStateSwitched += CurrentGameState_OnStateSwitched;
         _currentGameState.OnEventNotification += _currentGameState_OnEventNotification;
+
+        if(isPaused)
+        {
+            isPaused = false;
+        }
     }
 
-    protected virtual void _currentGameState_OnEventNotification(object sender, Event e)
+    protected virtual void _currentGameState_OnEventNotification(object sender, BaseGameStateEvent e)
     {
 
         switch (e)
         {
-            case Event.kSTART:
+            case BaseGameStateEvent.GameStart:
                 SwitchGameState(new GameplayState());
                 break;
-            case Event.kGAME_QUIT:
+            case BaseGameStateEvent.GameQuit:
                 Exit();
                 break;
-            case Event.kPAUSE:
+            case BaseGameStateEvent.GamePause:
                 isPaused = !isPaused;
-                break;
-            case Event.kLOOSE:
-                SwitchGameState(new SplashState());
                 break;
         }
     }

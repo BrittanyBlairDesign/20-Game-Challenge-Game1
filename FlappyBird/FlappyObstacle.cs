@@ -100,7 +100,7 @@ public class FlappyObstacle : PlayerSprite
         }
     }
 
-    public virtual Event CollisionCheck(PlayerSprite other)
+    public virtual BaseGameStateEvent CollisionCheck(PlayerSprite other)
     {
         if (other.collisions != null && collisions != null)
         {
@@ -113,7 +113,7 @@ public class FlappyObstacle : PlayerSprite
                     {
                         if (r.Intersects(pr))
                         {
-                            return Event.kLOOSE;
+                            return new GameplayEvents.PlayerLoose();
                         }
                     }
                     else
@@ -125,13 +125,13 @@ public class FlappyObstacle : PlayerSprite
                         else if(!r.Intersects(pr) && hasEnteredSafeZone)
                         {
                             hasEnteredSafeZone = false;
-                            return Event.kPOINTS;
+                            return new GameplayEvents.PlayerPoints();
                         }
                     }
                 }
             }
         }
-        return Event.kNONE;
+        return null ;
     }
 
     public float speed;

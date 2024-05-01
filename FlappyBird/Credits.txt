@@ -1,0 +1,18 @@
+
+Created By
+Brittany Blair
+	Programming
+	Art
+
+
+Audio
+Luke.RUSTLTD
+	wind1 - https://opengameart.org/content/wind1
+Joth
+	8bit Bossa - https://opengameart.org/content/bossa-nova
+remaxim
+	melee sounds - https://opengameart.org/content/3-melee-sounds
+
+
+Made with MonoGame Framework
+Programmed using Visual Studio Community.

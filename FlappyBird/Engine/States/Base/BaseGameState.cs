@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -19,6 +20,7 @@ public abstract class BaseGameState
     protected GraphicsDevice graphics;
     protected bool isDebug = false;
     protected InputManager _inputManager { get; set; }
+    protected SoundManager _soundManager = new SoundManager();
 
     // Loading and unloading content
     public abstract void LoadContent();
@@ -43,22 +45,34 @@ public abstract class BaseGameState
         var texture = _contentManager.Load<Texture2D>(textureName);
         return texture ?? _contentManager.Load<Texture2D>(FallbackTexture);
     }
+    protected SoundEffect LoadSound(string soundName)
+    {
+        return _contentManager.Load<SoundEffect>(soundName);
+    }
 
     // Input
     protected abstract void SetInputManager();
+    public abstract void UpdateGameState(GameTime gameTime);
     public abstract void HandleInput(GameTime gameTime);
-    public virtual void Update(GameTime gameTime) { }
+    public virtual void Update(GameTime gameTime) 
+    {
+        _soundManager.PlaySoundTrack();
+        UpdateGameState(gameTime);
+        
+    }
             
     // Events
-    public event EventHandler<Event> OnEventNotification;
-    protected void NotifyEvent(Event eventType, object argument = null)
+    public event EventHandler<BaseGameStateEvent> OnEventNotification;
+    protected void NotifyEvent(BaseGameStateEvent gameEvent)
     {
-        OnEventNotification?.Invoke(this, eventType);
+        OnEventNotification?.Invoke(this, gameEvent);
 
         foreach(var gameObject in _gameObjects)
         {
-            gameObject.OnNotify(eventType);
+            gameObject.OnNotify(gameEvent);
         }
+
+        _soundManager.OnNotify(gameEvent);
     }
 
     public event EventHandler<BaseGameState> OnStateSwitched;

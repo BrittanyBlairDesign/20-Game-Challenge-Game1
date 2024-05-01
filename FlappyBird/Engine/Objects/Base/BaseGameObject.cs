@@ -19,7 +19,7 @@ public class BaseGameObject
         set { _position = value; }
     }
 
-    public virtual void OnNotify(Event eventType, object argument = null) { }
+    public virtual void OnNotify(BaseGameStateEvent gameEvent) { }
     public virtual void Render(SpriteBatch spriteBatch)
     {
         // TODO: Drawing call here

@@ -1,5 +1,6 @@
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -61,6 +62,14 @@ class FlappyBirdGameplayState : GameplayState
         obstacleDirection = new Vector2(-1, 0);
 
         _playerSprite.Position = new Vector2(playerXPos, playerYPos);
+
+
+        // Audio
+        var jumpSound = LoadSound("FlappyBird/Sound/melee sound");
+        _soundManager.RegisterSound(new GameplayEvents.PlayerJumps(), jumpSound);
+
+        var track1 = LoadSound("FlappyBird/Sound/wind1").CreateInstance();
+        _soundManager.SetSoundTrack(new List<SoundEffectInstance>() { track1 });
  
     }
 
@@ -78,13 +87,18 @@ class FlappyBirdGameplayState : GameplayState
         {
             if (cmd is GameplayInputCommand.GameExit)
             {
-                NotifyEvent(Event.kGAME_QUIT);
+                NotifyEvent(new BaseGameStateEvent.GameQuit());
             }
 
             if (cmd is GameplayInputCommand.PlayerJump)
             {
                 FlappyPlayer aPlayer = _playerSprite as FlappyPlayer;
-                aPlayer.Jump();
+                
+                if (!aPlayer.isJumping)
+                { 
+                    aPlayer.Jump(); 
+                    NotifyEvent(new GameplayEvents.PlayerJumps());
+                }
                 knowsMovement = true;
             }
             else
@@ -96,7 +110,7 @@ class FlappyBirdGameplayState : GameplayState
         });
     }
 
-    public override void Update(GameTime gameTime)
+    public override void UpdateGameState(GameTime gameTime)
     {
 
         float DeltaTime = (float)gameTime.ElapsedGameTime.Seconds;
@@ -121,10 +135,14 @@ class FlappyBirdGameplayState : GameplayState
             {
                 Obstacle = new FlappyObstacle(LoadTexture(ObstacleTexture), obstaclePos, obstacleSpeed, obstacleDirection);
             }
+
             obstaclePos = new Vector2(_viewportWidth + 500 - Obstacle.Width/2, (_viewportHeight / 2 - Obstacle.Height/2) + offset);
             Obstacle.Position = obstaclePos;
             Obstacle.GenerateCollision();
-            Obstacle.SetCollisionTexture(graphics);
+            if(isDebug)
+            {
+                Obstacle.SetCollisionTexture(graphics);
+            }
             _Obstacles.Add(Obstacle);
             InsertGameObject(Obstacle);
 
@@ -138,15 +156,10 @@ class FlappyBirdGameplayState : GameplayState
 
             foreach (FlappyObstacle o in _Obstacles)
             {
-                Event e = o.CollisionCheck(p);
-                switch(e)
+                BaseGameStateEvent e = o.CollisionCheck(p);
+                if (e != null)
                 {
-                    case Event.kLOOSE:
-                        NotifyEvent(Event.kLOOSE);
-                        break;
-                    case Event.kPOINTS:
-                        AddScorePoints();
-                        break;
+                    NotifyEvent(e);
                 }
 
                 o.speed = obstacleSpeed;
@@ -157,8 +170,6 @@ class FlappyBirdGameplayState : GameplayState
                 }
             }
         }
-
-        base.Update(gameTime);
     }
 
     public void AddScorePoints()

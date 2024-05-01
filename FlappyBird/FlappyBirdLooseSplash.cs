@@ -1,7 +1,9 @@
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace FlappyBird;
 
@@ -62,6 +64,11 @@ class FlappyBirdLooseSplash : SplashState
         AddGameObject(roundScore);
         AddGameObject(start);
         AddGameObject(end);
+
+        var track1 = LoadSound("FlappyBird/Sound/8bit Bossa").CreateInstance();
+        _soundManager.SetSoundTrack(new List<SoundEffectInstance>() { track1 });
+
+
     }
 
     public override void LoadContent(GraphicsDevice graphics)
@@ -79,18 +86,18 @@ class FlappyBirdLooseSplash : SplashState
             {
                 if(start.isHovering() )
                 {
-                    NotifyEvent(Event.kSTART);
+                    NotifyEvent(new BaseGameStateEvent.GameStart());
                 }
                 else if ( end.isHovering())
                 {
-                    NotifyEvent(Event.kGAME_QUIT);
+                    NotifyEvent(new BaseGameStateEvent.GameQuit());
                 }
                 
             }
 
             if(cmd is SplashInputCommand.GameExit)
             {
-                NotifyEvent(Event.kGAME_QUIT);
+                NotifyEvent(new BaseGameStateEvent.GameQuit());
             }
         });
     }

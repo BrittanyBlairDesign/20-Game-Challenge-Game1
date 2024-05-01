@@ -56,6 +56,36 @@
 /processorParam:TextureFormat=Compressed
 /build:FlappyBird/Font/ScoreFont.spritefont
 
+#begin FlappyBird/Sound/8bit Bossa.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:FlappyBird/Sound/8bit Bossa.mp3
+
+#begin FlappyBird/Sound/animal melee sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:FlappyBird/Sound/animal melee sound.wav
+
+#begin FlappyBird/Sound/melee sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:FlappyBird/Sound/melee sound.wav
+
+#begin FlappyBird/Sound/sword sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:FlappyBird/Sound/sword sound.wav
+
+#begin FlappyBird/Sound/wind1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:FlappyBird/Sound/wind1.wav
+
 #begin FlappyBird/Sprites/cloud.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -26,38 +26,40 @@ public class FlappyBirdGame : MainGame
     protected override void LoadContent()
     {
 
-        save = new SaveFile() { HighScore = 0, score = 0 };
-        Save(save);
-        save = Load();
 
+        save = Load();
         FlappyBirdStartSplash fs = _firstGameState as FlappyBirdStartSplash;
         fs.scoreText = "High Score : " + save.HighScore.ToString();
 
         _firstGameState = fs;
         base.LoadContent();
     }
-    protected override void _currentGameState_OnEventNotification(object sender, Event e)
+    protected override void _currentGameState_OnEventNotification(object sender, BaseGameStateEvent e)
     {
         FlappyBirdGameplayState gs = _currentGameState as FlappyBirdGameplayState;
 
         switch (e)
         {
-            case Event.kSTART:
+            case BaseGameStateEvent.GameStart:
                 SwitchGameState(new FlappyBirdGameplayState());
                 break;
-            case Event.kGAME_QUIT:
+            case BaseGameStateEvent.GameQuit:
                 if(_currentGameState.GetType() == typeof(GameplayState))
                 { save.SetScores(gs.score); }
                 Save(save);
                 Exit();
                 break;
-            case Event.kPAUSE:
+            case BaseGameStateEvent.GamePause:
                 isPaused = !isPaused;
                 break;
-            case Event.kLOOSE:
+            case GameplayEvents.PlayerLoose:
                 save.SetScores(gs.score);
                 Save(save);
+                isPaused = true;
                 SwitchGameState(new FlappyBirdLooseSplash(save.HighScore.ToString(),gs.score.ToString()));
+                break;
+            case GameplayEvents.PlayerPoints:
+                gs.AddScorePoints();
                 break;
         }
     }
